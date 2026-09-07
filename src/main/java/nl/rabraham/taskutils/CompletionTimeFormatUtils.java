@@ -6,17 +6,17 @@ import java.time.Duration;
  * Utility class for formatting completion times to a human-readable format.
  */
 public final class CompletionTimeFormatUtils {
-    private static final String COMPLETION_TIME_FORMAT = "%d minutes %d seconds";
+    private static final String COMPLETION_TIME_FORMAT = "%d hours %d minutes %d seconds";
 
     private CompletionTimeFormatUtils() {
 
     }
 
     /**
-     * Formats the given completion time in milliseconds to a String of format "m minutes s seconds".
+     * Formats the given completion time in milliseconds to a String of format "h hours m minutes s seconds".
      * <p>
-     * Leftover milliseconds are truncated. For example, <code>toFormattedString(119_999)</code>
-     * returns <code>1 minutes 59 seconds</code>.
+     * Leftover milliseconds are truncated. For example, <code>toFormattedString(7_199_999)</code>
+     * returns <code>1 hours 59 minutes 59 seconds</code>.
      *
      * @param completionTimeMillis the completion time in milliseconds
      * @throws IllegalArgumentException if the completion time is negative
@@ -31,6 +31,11 @@ public final class CompletionTimeFormatUtils {
     }
 
     private static String formatCompletionTime(Duration duration) {
-        return String.format(COMPLETION_TIME_FORMAT, duration.toMinutes(), duration.toSecondsPart());
+        return String.format(
+                COMPLETION_TIME_FORMAT,
+                duration.toHours(),
+                duration.toMinutesPart(),
+                duration.toSecondsPart()
+        );
     }
 }
