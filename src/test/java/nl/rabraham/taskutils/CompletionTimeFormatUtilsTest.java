@@ -10,6 +10,13 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 public class CompletionTimeFormatUtilsTest {
 
     @Test
+    public void testFormatCompletionTimeThrowsNullPointerExceptionWhenFormatIsNull() {
+        assertThatCode(() -> CompletionTimeFormatUtils.formatCompletionTime(0, null))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("format must not be null");
+    }
+
+    @Test
     public void testFormatCompletionTimeThrowsIllegalArgumentExceptionWhenCompletionTimeIsNegative() {
         assertThatCode(() -> CompletionTimeFormatUtils.formatCompletionTime(-1))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -37,8 +44,24 @@ public class CompletionTimeFormatUtilsTest {
             7_199_999,    1 hours 59 minutes 59 seconds
             7_200_000,    2 hours
             """)
-    public void testFormatCompletionTimeReturnsFormattedString(long completionTime, String expected) {
+    public void testFormatCompletionTimeReturnsLongFormattedString(long completionTime, String expected) {
         final String actual = CompletionTimeFormatUtils.formatCompletionTime(completionTime);
+
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @CsvSource(textBlock = """
+            0,             0s
+            999,           0s
+            1000,          1s
+            60_000,        1m
+            61_000,        1m 1s
+            3_600_000,     1h
+            3_661_000,     1h 1m 1s
+            """)
+    public void testFormatCompletionTimeReturnsShortFormattedString(long completionTime, String expected) {
+        final String actual = CompletionTimeFormatUtils.formatCompletionTime(completionTime, CompletionTimeFormat.SHORT);
 
         assertThat(actual).isEqualTo(expected);
     }
